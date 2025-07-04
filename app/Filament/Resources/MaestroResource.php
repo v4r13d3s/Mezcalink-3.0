@@ -18,6 +18,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use Filament\Tables\Filters\SelectFilter;
 
 class MaestroResource extends Resource
 {
@@ -149,7 +150,11 @@ class MaestroResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('genero')
+                ->options([
+                    'masculino' => 'Masculino',
+                    'femenino' => 'Femenino',
+                ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -37,8 +37,8 @@ class Palenque extends Model
         return $this->belongsTo(City::class);
     }
 
-    public function maestro()
+    public function marcas()
     {
-        return $this->belongsTo(Maestro::class);
+        return $this->belongsToMany(Marca::class, 'palenque_marca', 'palenque_id', 'marca_id');
     }
 }

@@ -19,7 +19,6 @@ class Marca extends Model
         'redes_sociales',
         'sitio_web',
         'pais_origen',
-        'tipos_agave',
         'country_id',
         'state_id',
         'city_id',
@@ -27,15 +26,9 @@ class Marca extends Model
         'postal_code',
     ];
 
-    public function maestro()
-    {
-        return $this->belongsTo(Maestro::class);
-    }
-
-    public function palenque()
-    {
-        return $this->belongsTo(Palenque::class);
-    }
+    protected $casts = [
+        'redes_sociales' => 'array',
+    ];
 
     public function country()
     {
@@ -50,5 +43,21 @@ class Marca extends Model
     public function city()
     {
         return $this->belongsTo(City::class);
+    }
+
+    // Relaciones many-to-many con las tablas pivot correctas
+    public function maestro()
+    {
+        return $this->belongsToMany(Maestro::class, 'maestro_marca', 'marca_id', 'maestro_id');
+    }
+
+    public function agave()
+    {
+        return $this->belongsToMany(Agave::class, 'agave_marca', 'marca_id', 'agave_id');
+    }
+
+    public function palenque()
+    {
+        return $this->belongsToMany(Palenque::class, 'palenque_marca', 'marca_id', 'palenque_id');
     }
 }

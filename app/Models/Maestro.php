@@ -34,4 +34,14 @@ class Maestro extends Model
     {
         return $this->belongsTo(State::class);
     }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
+    public function marcas()
+    {
+        return $this->belongsToMany(Marca::class, 'maestro_marca', 'maestro_id', 'marca_id');
+    }
 }
