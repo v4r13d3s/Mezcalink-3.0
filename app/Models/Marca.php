@@ -18,7 +18,6 @@ class Marca extends Model
         'correo',
         'redes_sociales',
         'sitio_web',
-        'pais_origen',
         'country_id',
         'state_id',
         'city_id',
@@ -48,16 +47,21 @@ class Marca extends Model
     // Relaciones many-to-many con las tablas pivot correctas
     public function maestro()
     {
-        return $this->belongsToMany(Maestro::class, 'maestro_marca', 'marca_id', 'maestro_id');
+        return $this->belongsToMany(Maestro::class, 'table_maestro_marca', 'marca_id', 'maestro_id');
     }
 
     public function agave()
     {
-        return $this->belongsToMany(Agave::class, 'agave_marca', 'marca_id', 'agave_id');
+        return $this->belongsToMany(Agave::class, 'table_agave_marca', 'marca_id', 'agave_id');
     }
 
     public function palenque()
     {
-        return $this->belongsToMany(Palenque::class, 'palenque_marca', 'marca_id', 'palenque_id');
+        return $this->belongsToMany(Palenque::class, 'table_palenque_marca', 'marca_id', 'palenque_id');
+    }
+
+    public function mezcal()
+    {
+        return $this->hasMany(Mezcal::class);
     }
 }

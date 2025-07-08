@@ -39,6 +39,6 @@ class Palenque extends Model
 
     public function marcas()
     {
-        return $this->belongsToMany(Marca::class, 'palenque_marca', 'palenque_id', 'marca_id');
+        return $this->belongsToMany(Marca::class, 'table_palenque_marca', 'palenque_id', 'marca_id');
     }
 }

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('nombre');
             $table->text('descripcion');
             $table->text('historia');
-            $table->string('telefono');
-            $table->string('correo')->unique();
+            $table->string('telefono')->nullable();
+            $table->string('correo')->unique()->nullable();
             $table->string('foto');
 
             $table->timestamps();

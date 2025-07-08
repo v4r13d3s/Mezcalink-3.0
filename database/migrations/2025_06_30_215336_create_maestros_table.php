@@ -14,16 +14,16 @@ return new class extends Migration
         Schema::create('maestros', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->string('apellido_paterno');
-            $table->string('apellido_materno');
-            $table->date('fecha_nacimiento');
+            $table->string('apellido_paterno')->nullable();
+            $table->string('apellido_materno')->nullable();
+            $table->date('fecha_nacimiento')->nullable();
             $table->enum('genero', ['Masculino', 'Femenino']);
             $table->string('nacionalidad');
-            $table->string('telefono');
-            $table->string('correo')->unique();
-            $table->string('foto');
-            $table->integer('anios_experiencia');
-            $table->text('biografia');
+            $table->string('telefono')->nullable();
+            $table->string('correo')->unique()->nullable();
+            $table->string('foto')->nullable();
+            $table->integer('anios_experiencia')->nullable();
+            $table->text('biografia')->nullable();
             $table->timestamps();
         });
     }

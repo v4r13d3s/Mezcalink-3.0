@@ -31,7 +31,7 @@ class MaestroResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Información del maestro')
+                Section::make('Información del maestro mezcalero')
                     ->columns(3)
                     ->schema([
                         Forms\Components\TextInput::make('nombre')
@@ -46,14 +46,11 @@ class MaestroResource extends Resource
                             ->options([
                                 'Masculino' => 'Masculino',
                                 'Femenino' => 'Femenino',
-                            ])
-                            ->required(),
+                            ]),
                         Forms\Components\TextInput::make('nacionalidad')
                             ->required()
                             ->maxLength(20),
-                        Forms\Components\TextInput::make('telefono')
-                            ->maxLength(10),
-                            Forms\Components\FileUpload::make('foto')
+                        Forms\Components\FileUpload::make('foto')
                             ->maxSize(10240)
                             ->maxFiles(1)
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/svg']) 
@@ -61,16 +58,10 @@ class MaestroResource extends Resource
                             ->disk('public')                // Disco público para acceso web
                             ->visibility('public')          // Visible públicamente
                             ->image(), // Esto restringe a solo imágenes
-                        Forms\Components\TextInput::make('correo')
-                            ->email()
-                            ->maxLength(25),
                         Forms\Components\TextInput::make('anios_experiencia')
-                            ->required()
                             ->maxLength(2),
-                        Forms\Components\TextInput::make('biografia')
-                            ->required()
-                            ->maxLength(150),
-                        
+                        Forms\Components\Textarea::make('biografia')
+                            ->limit(30),
                         Forms\Components\Select::make('country_id')
                             ->relationship(name: 'country', titleAttribute: 'name')
                             ->searchable()
@@ -88,17 +79,25 @@ class MaestroResource extends Resource
                             ->searchable()
                             ->preload()
                             ->live()
-                            ->afterStateUpdated(fn (Set $set) => $set('city_id', null))
-                            ->required(),
+                            ->afterStateUpdated(fn (Set $set) => $set('city_id', null)),
                         Forms\Components\Select::make('city_id')
                             ->options(fn (Get $get): Collection => City::query()
                             ->where('state_id', $get('state_id'))
                             ->pluck('name','id'))
                             ->searchable()
                             ->preload()
-                            ->live()
-                            ->required(),
+                            ->live(),
                     ]),
+
+                Section::make('Información de contacto (opcional)')
+                ->columns(2)
+                ->schema([
+                    Forms\Components\TextInput::make('telefono')
+                    ->maxLength(10),
+                    Forms\Components\TextInput::make('correo')
+                    ->email()
+                    ->maxLength(25),
+                ])
             ]);
     }
 

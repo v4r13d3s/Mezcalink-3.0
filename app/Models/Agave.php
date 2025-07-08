@@ -32,6 +32,6 @@ class Agave extends Model
 
     public function marcas()
     {
-        return $this->belongsToMany(Marca::class, 'agave_marca', 'agave_id', 'marca_id');
+        return $this->belongsToMany(Marca::class, 'table_agave_marca', 'agave_id', 'marca_id');
     }
 }

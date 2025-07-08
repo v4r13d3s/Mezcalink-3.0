@@ -42,6 +42,6 @@ class Maestro extends Model
 
     public function marcas()
     {
-        return $this->belongsToMany(Marca::class, 'maestro_marca', 'maestro_id', 'marca_id');
+        return $this->belongsToMany(Marca::class, 'table_maestro_marca', 'maestro_id', 'marca_id');
     }
 }

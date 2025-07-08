@@ -41,6 +41,7 @@ class MarcaResource extends Resource
                     ->required()
                     ->maxLength(20),
                     Forms\Components\FileUpload::make('logo')
+                    ->maxSize(10240)
                     ->label('Logo')
                     ->required()
                     ->image()
@@ -49,24 +50,20 @@ class MarcaResource extends Resource
                     ->visibility('public'),
                     Forms\Components\TextInput::make('descripcion')
                     ->label('Descripción')
-                    ->required()
-                    ->maxLength(255),
+                    ->required(),
                     Forms\Components\TextInput::make('historia')
-                    ->label('Historia')
-                    ->required()
-                    ->maxLength(255),
+                    ->label('Historia'),
                     Forms\Components\TextInput::make('eslogan')
                     ->label('Eslogan')
                     ->required()
-                    ->maxLength(30),
+                    ->maxLength(50),
                     
                     // CORREGIDO: Usar el nombre plural de la relación
                     Forms\Components\Select::make('maestro')
                         ->label('Maestro')
                         ->multiple()
                         ->options(Maestro::all()->pluck('nombre', 'id'))
-                        ->searchable()
-                        ->required(),
+                        ->searchable(),
                     Forms\Components\Select::make('agave')
                         ->label('Agave')
                         ->multiple()
@@ -77,8 +74,7 @@ class MarcaResource extends Resource
                         ->label('Palenque')
                         ->multiple()
                         ->options(Palenque::all()->pluck('nombre', 'id'))
-                        ->searchable()
-                        ->required(),
+                        ->searchable(),
                     
                     
                 ]),
@@ -92,8 +88,8 @@ class MarcaResource extends Resource
                     ->maxLength(4)
                     ->required(),
                     Forms\Components\FileUpload::make('certificado_dom')
+                    ->maxSize(10240)
                     ->label('Certificado DOM')
-                    ->required()
                     ->image()
                     ->directory('uploads/marcas')
                     ->disk('public')
@@ -105,7 +101,6 @@ class MarcaResource extends Resource
                 ->schema([
                     Forms\Components\TextInput::make('telefono')
                     ->label('Teléfono')
-                    ->required()
                     ->maxLength(13),
                     Forms\Components\TextInput::make('correo')
                     ->label('Correo')
@@ -160,15 +155,12 @@ class MarcaResource extends Resource
                         ->pluck('name','id'))
                         ->searchable()
                         ->preload()
-                        ->live()
-                        ->required(),
+                        ->live(),
                     Forms\Components\TextInput::make('address')
                         ->label('Dirección')
-                        ->required()
                         ->maxLength(25),
                     Forms\Components\TextInput::make('postal_code')
                         ->label('Código postal')
-                        ->required()
                         ->maxLength(5),
                 ]),
             ]);
@@ -179,6 +171,7 @@ class MarcaResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nombre')
+                ->limit(20)
                 ->label('Nombre')
                 ->sortable()
                 ->searchable(),
@@ -187,12 +180,15 @@ class MarcaResource extends Resource
                 ->sortable()
                 ->searchable(),
                 Tables\Columns\TextColumn::make('descripcion')
+                ->limit(30)
                 ->label('Descripción')
                 ->searchable(),
                 Tables\Columns\TextColumn::make('historia')
+                ->limit(30)
                 ->label('Historia')
                 ->searchable(),
                 Tables\Columns\TextColumn::make('eslogan')
+                ->limit(20)
                 ->label('Eslogan')
                 ->searchable(),
                 
@@ -218,8 +214,10 @@ class MarcaResource extends Resource
                 Tables\Columns\TextColumn::make('correo')
                 ->searchable(),
                 Tables\Columns\TextColumn::make('redes_sociales')
+                ->limit(20)
                 ->searchable(),
                 Tables\Columns\TextColumn::make('sitio_web')
+                ->limit(20)
                 ->searchable(),
                 Tables\Columns\TextColumn::make('country.name')
                 ->searchable()
@@ -231,6 +229,7 @@ class MarcaResource extends Resource
                 ->searchable()
                 ->sortable(),
                 Tables\Columns\TextColumn::make('address')
+                ->limit(20)
                 ->searchable(),
                 Tables\Columns\TextColumn::make('postal_code')
                 ->searchable(),

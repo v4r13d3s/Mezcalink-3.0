@@ -35,9 +35,8 @@ protected static ?string $navigationType = '8';
                         Forms\Components\TextInput::make('nombre')
                             ->required()
                             ->maxLength(25),
-                        Forms\Components\TextInput::make('descripcion')
-                            ->required()
-                            ->maxLength(150),
+                        Forms\Components\Textarea::make('descripcion')
+                            ->required(),
                         Forms\Components\FileUpload::make('foto')
                             ->maxSize(10240)    
                             ->maxFiles(1)
@@ -48,7 +47,7 @@ protected static ?string $navigationType = '8';
                             ->image(),
                         Forms\Components\TextInput::make('tiempo_maduracion')
                             ->required()
-                            ->maxLength(2),
+                            ->maxLength(150),
                             Forms\Components\Select::make('country_id')
                             ->relationship(name: 'country', titleAttribute: 'name')
                             ->searchable()
@@ -74,8 +73,7 @@ protected static ?string $navigationType = '8';
                         ->pluck('name','id'))
                             ->searchable()
                             ->preload()
-                            ->live()
-                            ->required(),
+                            ->live(),
                     ]),
                 
                 
@@ -90,12 +88,14 @@ protected static ?string $navigationType = '8';
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('descripcion')
+                    ->limit(30)
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\ImageColumn::make('foto')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tiempo_maduracion')
+                    ->limit(30)
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('country.name')

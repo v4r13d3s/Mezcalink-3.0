@@ -37,11 +37,9 @@ class PalenqueResource extends Resource
                             ->required()
                             ->maxLength(25),
                         Forms\Components\TextInput::make('descripcion')
-                            ->required()
-                            ->maxLength(255),
+                            ->required(),
                         Forms\Components\TextInput::make('historia')
-                            ->required()
-                            ->maxLength(255),
+                            ->required(),
                         Forms\Components\FileUpload::make('foto')
                             ->maxSize(10240)
                             ->directory('uploads/palenques') // Más específico
@@ -49,16 +47,13 @@ class PalenqueResource extends Resource
                             ->visibility('public')          // Visible públicamente
                             ->image(),
                         ]),
-                        Section::make('Información de contacto')
+                        Section::make('Información de contacto (opcional)')
                         ->columns(3)
                         ->schema([
                             Forms\Components\TextInput::make('telefono')
-                                ->required()
                                 ->maxLength(10),
                             Forms\Components\TextInput::make('correo')
-                                ->required()
                                 ->maxLength(25),
-                            
                         ]),
                         Section::make('Información de dirección')
                         ->columns(3)

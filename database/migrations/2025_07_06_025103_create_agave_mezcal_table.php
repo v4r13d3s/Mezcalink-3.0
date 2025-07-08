@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('agaves', function (Blueprint $table) {
+        Schema::create('agave_mezcal', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->text('descripcion');
-            $table->string('foto');
-            $table->string('tiempo_maduracion')->nullable();
+            $table->foreignId('agave_id');
+            $table->foreignId('mezcal_id');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('agaves');
+        Schema::dropIfExists('agave_mezcal');
     }
 };
