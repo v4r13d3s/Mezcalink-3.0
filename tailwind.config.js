@@ -10,7 +10,6 @@ export default {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
     ],
-
     theme: {
         extend: {
             fontFamily: {
@@ -18,6 +17,5 @@ export default {
             },
         },
     },
-
-    plugins: [forms, typography],
+    plugins: [forms, typography, require('daisyui')], // Agrega DaisyUI aquí
 };
