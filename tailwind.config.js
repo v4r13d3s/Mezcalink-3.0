@@ -17,5 +17,5 @@ export default {
             },
         },
     },
-    plugins: [forms, typography, require('daisyui')], // Agrega DaisyUI aquí
+    plugins: [forms, typography],
 };
