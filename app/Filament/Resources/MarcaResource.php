@@ -21,6 +21,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str; // Importar Str para generar el slug
 
 class MarcaResource extends Resource
 {
@@ -29,6 +30,7 @@ class MarcaResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Mezcal tables';
     protected static ?int $navigationSort = 6;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -40,10 +42,15 @@ class MarcaResource extends Resource
                     ->label('Nombre')
                     ->required()
                     ->maxLength(20),
+                    Forms\Components\TextInput::make('slug')
+                        ->label('Slug')
+                        ->required()
+                        ->maxLength(255)
+                        ->unique(Marca::class, 'slug', ignoreRecord: true) // Asegura que el slug sea único
+                        ->helperText('Ingresa un slug único y amigable para URLs (por ejemplo, "marca-los-amigos").'), // Ayuda al usuario
                     Forms\Components\FileUpload::make('logo')
                     ->maxSize(10240)
                     ->label('Logo')
-                    ->required()
                     ->image()
                     ->directory('uploads/marcas')
                     ->disk('public')
@@ -57,8 +64,6 @@ class MarcaResource extends Resource
                     ->label('Eslogan')
                     ->required()
                     ->maxLength(50),
-                    
-                    // CORREGIDO: Usar el nombre plural de la relación
                     Forms\Components\Select::make('maestro')
                         ->label('Maestro')
                         ->multiple()
@@ -68,15 +73,12 @@ class MarcaResource extends Resource
                         ->label('Agave')
                         ->multiple()
                         ->options(Agave::all()->pluck('nombre', 'id'))
-                        ->searchable()
-                        ->required(),
+                        ->searchable(),
                     Forms\Components\Select::make('palenque')
                         ->label('Palenque')
                         ->multiple()
                         ->options(Palenque::all()->pluck('nombre', 'id'))
                         ->searchable(),
-                    
-                    
                 ]),
 
                 Section::make('Información legal')
@@ -85,8 +87,7 @@ class MarcaResource extends Resource
                     Forms\Components\TextInput::make('anio_fundacion')
                     ->label('Año de fundación')
                     ->numeric()
-                    ->maxLength(4)
-                    ->required(),
+                    ->maxLength(4),
                     Forms\Components\FileUpload::make('certificado_dom')
                     ->maxSize(10240)
                     ->label('Certificado DOM')
@@ -104,7 +105,6 @@ class MarcaResource extends Resource
                     ->maxLength(13),
                     Forms\Components\TextInput::make('correo')
                     ->label('Correo')
-                    ->required()
                     ->maxLength(30),
                     Forms\Components\Repeater::make('redes_sociales')
                     ->label('Redes Sociales')
@@ -115,7 +115,7 @@ class MarcaResource extends Resource
                             ->maxLength(255),
                     ])
                     ->minItems(0)
-                    ->maxItems(10) // Puedes ajustar el máximo si lo deseas
+                    ->maxItems(10)
                     ->addActionLabel('Agregar red social'),
                     Forms\Components\TextInput::make('sitio_web')
                     ->label('Sitio web')
@@ -126,7 +126,6 @@ class MarcaResource extends Resource
                 Section::make('Información de dirección')
                 ->columns(3)
                 ->schema([
-                    
                     Forms\Components\Select::make('country_id')
                         ->label('País de origen')
                         ->relationship(name: 'country', titleAttribute: 'name')
@@ -175,6 +174,9 @@ class MarcaResource extends Resource
                 ->label('Nombre')
                 ->sortable()
                 ->searchable(),
+                Tables\Columns\TextColumn::make('slug') // Añadir slug a la tabla
+                ->searchable()
+                ->sortable(),
                 Tables\Columns\ImageColumn::make('logo')
                 ->label('Logo')
                 ->sortable()
@@ -191,8 +193,6 @@ class MarcaResource extends Resource
                 ->limit(20)
                 ->label('Eslogan')
                 ->searchable(),
-                
-                // CORREGIDO: Mostrar relaciones many-to-many correctamente
                 Tables\Columns\TextColumn::make('maestro.nombre')
                 ->badge()
                 ->separator(',')

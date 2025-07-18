@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Support\Str; // Import Str for slug generation
 
 class MaestroResource extends Resource
 {
@@ -27,6 +28,7 @@ class MaestroResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Mezcal tables';
     protected static ?int $navigationSort = 9;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -34,11 +36,18 @@ class MaestroResource extends Resource
                 Section::make('Información del maestro mezcalero')
                     ->columns(3)
                     ->schema([
-                        Forms\Components\TextInput::make('nombre')
-                            ->required()
-                            ->maxLength(25),
+                    Forms\Components\TextInput::make('nombre')
+                    ->label('Nombre')
+                    ->required()
+                    ->maxLength(20),
+                    Forms\Components\TextInput::make('slug')
+                        ->label('Slug')
+                        ->required()
+                        ->maxLength(255)
+                        ->unique(Maestro::class, 'slug', ignoreRecord: true) // Asegura que el slug sea único
+                        ->helperText('Ingresa un slug único y amigable para URLs.'), // Ayuda al usuario
                         Forms\Components\TextInput::make('apellido_paterno')
-                            ->maxLength(25),
+                            ->maxLength(25),                            
                         Forms\Components\TextInput::make('apellido_materno')
                             ->maxLength(25),
                         Forms\Components\DatePicker::make('fecha_nacimiento'),
@@ -53,11 +62,11 @@ class MaestroResource extends Resource
                         Forms\Components\FileUpload::make('foto')
                             ->maxSize(10240)
                             ->maxFiles(1)
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/svg']) 
-                            ->directory('uploads/maestros') // Más específico
-                            ->disk('public')                // Disco público para acceso web
-                            ->visibility('public')          // Visible públicamente
-                            ->image(), // Esto restringe a solo imágenes
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/svg'])
+                            ->directory('uploads/maestros')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->image(),
                         Forms\Components\TextInput::make('anios_experiencia')
                             ->maxLength(100),
                         Forms\Components\Textarea::make('biografia'),
@@ -66,37 +75,37 @@ class MaestroResource extends Resource
                             ->searchable()
                             ->preload()
                             ->live()
-                            ->afterStateUpdated(function (Set $set){
+                            ->afterStateUpdated(function (Set $set) {
                                 $set('state_id', null);
                                 $set('city_id', null);
                             })
                             ->required(),
                         Forms\Components\Select::make('state_id')
                             ->options(fn (Get $get): Collection => State::query()
-                            ->where('country_id', $get('country_id'))
-                            ->pluck('name', 'id'))
+                                ->where('country_id', $get('country_id'))
+                                ->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
                             ->live()
                             ->afterStateUpdated(fn (Set $set) => $set('city_id', null)),
                         Forms\Components\Select::make('city_id')
                             ->options(fn (Get $get): Collection => City::query()
-                            ->where('state_id', $get('state_id'))
-                            ->pluck('name','id'))
+                                ->where('state_id', $get('state_id'))
+                                ->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
                             ->live(),
                     ]),
 
                 Section::make('Información de contacto (opcional)')
-                ->columns(2)
-                ->schema([
-                    Forms\Components\TextInput::make('telefono')
-                    ->maxLength(10),
-                    Forms\Components\TextInput::make('correo')
-                    ->email()
-                    ->maxLength(25),
-                ])
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('telefono')
+                            ->maxLength(10),
+                        Forms\Components\TextInput::make('correo')
+                            ->email()
+                            ->maxLength(25),
+                    ])
             ]);
     }
 
@@ -111,6 +120,9 @@ class MaestroResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('apellido_materno')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('slug') // Add slug to table view
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('fecha_nacimiento')
@@ -149,10 +161,10 @@ class MaestroResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('genero')
-                ->options([
-                    'masculino' => 'Masculino',
-                    'femenino' => 'Femenino',
-                ]),
+                    ->options([
+                        'masculino' => 'Masculino',
+                        'femenino' => 'Femenino',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

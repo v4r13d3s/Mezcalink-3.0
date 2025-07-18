@@ -38,6 +38,20 @@ class MezcalResource extends Resource
                     ->label('Nombre')
                     ->required()
                     ->maxLength(20),
+                    Forms\Components\TextInput::make('slug')
+                        ->label('Slug')
+                        ->required()
+                        ->maxLength(255)
+                        ->unique(Mezcal::class, 'slug', ignoreRecord: true) // Asegura que el slug sea único
+                        ->helperText('Ingresa un slug único y amigable para URLs (por ejemplo, "mezcal-los-amigos").'), // Ayuda al usuario
+                    Forms\Components\FileUpload::make('foto')
+                        ->maxSize(10240)
+                        ->label('Foto')
+                        ->image()
+                        ->directory('assets/images/mezcals')
+                        ->disk('public')
+                        ->visibility('public')
+                        ->nullable(),
                     Forms\Components\Select::make('categoria')
                     ->label('Categoría')
                     ->options([
@@ -129,6 +143,16 @@ class MezcalResource extends Resource
                 Tables\Columns\TextColumn::make('nombre')
                 ->label('Nombre')
                 ->searchable(),
+                Tables\Columns\TextColumn::make('slug') // Añadir slug a la tabla
+                ->searchable()
+                ->sortable(),
+                Tables\Columns\ImageColumn::make('foto')
+                    ->label('Foto')
+                    ->disk('public')
+                    ->height(50)
+                    ->width(50)
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('categoria')
                 ->label('Categoría')
                 ->searchable(),

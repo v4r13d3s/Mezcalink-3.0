@@ -8,6 +8,7 @@ class Agave extends Model
 {
     protected $fillable = [
         'nombre',
+        'slug',
         'descripcion',
         'foto',
         'tiempo_maduracion',

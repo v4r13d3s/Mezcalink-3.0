@@ -18,13 +18,15 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str; // Importar Str para generar el slug
 
 class AgaveResource extends Resource
 {
     protected static ?string $model = Agave::class;
     protected static ?string $navigationGroup = 'Mezcal tables';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-protected static ?string $navigationType = '8';
+    protected static ?string $navigationType = '8';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -33,50 +35,55 @@ protected static ?string $navigationType = '8';
                     ->columns(3)
                     ->schema([
                         Forms\Components\TextInput::make('nombre')
-                            ->required()
-                            ->maxLength(25),
+                    ->label('Nombre')
+                    ->required()
+                    ->maxLength(20),
+                    Forms\Components\TextInput::make('slug')
+                        ->label('Slug')
+                        ->required()
+                        ->maxLength(255)
+                        ->unique(Agave::class, 'slug', ignoreRecord: true) // Asegura que el slug sea único
+                        ->helperText('Ingresa un slug único y amigable para URLs (por ejemplo, "marca-los-amigos").'), // Ayuda al usuario
                         Forms\Components\Textarea::make('descripcion')
                             ->required(),
                         Forms\Components\FileUpload::make('foto')
-                            ->maxSize(10240)    
+                            ->maxSize(10240)
                             ->maxFiles(1)
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/svg']) 
-                            ->directory('uploads/agaves') // Más específico
-                            ->disk('public')                // Disco público para acceso web
-                            ->visibility('public')          // Visible públicamente
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/svg'])
+                            ->directory('uploads/agaves')
+                            ->disk('public')
+                            ->visibility('public')
                             ->image(),
                         Forms\Components\TextInput::make('tiempo_maduracion')
                             ->required()
                             ->maxLength(150),
-                            Forms\Components\Select::make('country_id')
+                        Forms\Components\Select::make('country_id')
                             ->relationship(name: 'country', titleAttribute: 'name')
                             ->searchable()
                             ->preload()
                             ->live()
-                            ->afterStateUpdated(function (Set $set){
+                            ->afterStateUpdated(function (Set $set) {
                                 $set('state_id', null);
                                 $set('city_id', null);
                             })
                             ->required(),
                         Forms\Components\Select::make('state_id')
-                        ->options(fn (Get $get): Collection => State::query()
-                        ->where('country_id', $get('country_id'))
-                        ->pluck('name', 'id'))
-                        ->searchable()
-                        ->preload()
-                        ->live()
-                        ->afterStateUpdated(fn (Set $set) => $set('city_id', null))
-                        ->required(),
+                            ->options(fn (Get $get): Collection => State::query()
+                                ->where('country_id', $get('country_id'))
+                                ->pluck('name', 'id'))
+                            ->searchable()
+                            ->preload()
+                            ->live()
+                            ->afterStateUpdated(fn (Set $set) => $set('city_id', null))
+                            ->required(),
                         Forms\Components\Select::make('city_id')
-                        ->options(fn (Get $get): Collection => City::query()
-                        ->where('state_id', $get('state_id'))
-                        ->pluck('name','id'))
+                            ->options(fn (Get $get): Collection => City::query()
+                                ->where('state_id', $get('state_id'))
+                                ->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
                             ->live(),
                     ]),
-                
-                
             ]);
     }
 
@@ -85,6 +92,9 @@ protected static ?string $navigationType = '8';
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nombre')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('slug') // Añadir slug a la tabla
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('descripcion')

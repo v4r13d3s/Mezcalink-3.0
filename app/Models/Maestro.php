@@ -10,6 +10,7 @@ class Maestro extends Model
 
     protected $fillable = [
         'nombre',
+        'slug',
         'apellido_paterno',
         'apellido_materno',
         'fecha_nacimiento',

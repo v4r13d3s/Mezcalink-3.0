@@ -8,6 +8,8 @@ class Mezcal extends Model
 {
     protected $fillable = [
         "nombre",
+        "slug",
+        'foto',
         "categoria",
         "tipo",
         "precio_regular",

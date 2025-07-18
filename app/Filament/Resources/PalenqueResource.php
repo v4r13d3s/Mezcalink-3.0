@@ -18,6 +18,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str; // Importar Str para generar el slug
 
 class PalenqueResource extends Resource
 {
@@ -26,6 +27,7 @@ class PalenqueResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Mezcal tables';
     protected static ?int $navigationSort = 10;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -34,66 +36,73 @@ class PalenqueResource extends Resource
                     ->columns(3)
                     ->schema([
                         Forms\Components\TextInput::make('nombre')
-                            ->required()
-                            ->maxLength(25),
+                    ->label('Nombre')
+                    ->required()
+                    ->maxLength(20),
+                    Forms\Components\TextInput::make('slug')
+                        ->label('Slug')
+                        ->required()
+                        ->maxLength(255)
+                        ->unique(Palenque::class, 'slug', ignoreRecord: true) // Asegura que el slug sea único
+                        ->helperText('Ingresa un slug único y amigable para URLs.'), // Ayuda al usuario
                         Forms\Components\TextInput::make('descripcion')
                             ->required(),
                         Forms\Components\TextInput::make('historia')
                             ->required(),
                         Forms\Components\FileUpload::make('foto')
                             ->maxSize(10240)
-                            ->directory('uploads/palenques') // Más específico
-                            ->disk('public')                // Disco público para acceso web
-                            ->visibility('public')          // Visible públicamente
+                            ->directory('uploads/palenques')
+                            ->disk('public')
+                            ->visibility('public')
                             ->image(),
-                        ]),
-                        Section::make('Información de contacto (opcional)')
-                        ->columns(3)
-                        ->schema([
-                            Forms\Components\TextInput::make('telefono')
-                                ->maxLength(10),
-                            Forms\Components\TextInput::make('correo')
-                                ->maxLength(25),
-                        ]),
-                        Section::make('Información de dirección')
-                        ->columns(3)
-                        ->schema([
-                            Forms\Components\Select::make('country_id')
-                                ->relationship(name: 'country', titleAttribute: 'name')
-                                ->searchable()
-                                ->preload()
-                                ->live()
-                                ->afterStateUpdated(function (Set $set){
-                                    $set('state_id', null);
-                                    $set('city_id', null);
-                                })
-                                ->required(),
-                            Forms\Components\Select::make('state_id')
+                    ]),
+                    Section::make('Información de contacto (opcional)')
+                    ->columns(3)
+                    ->schema([
+                        Forms\Components\TextInput::make('telefono')
+                            ->maxLength(10),
+                        Forms\Components\TextInput::make('correo')
+                            ->maxLength(25),
+                    ]),
+                    Section::make('Información de dirección')
+                    ->columns(3)
+                    ->schema([
+                        Forms\Components\Select::make('country_id')
+                            ->relationship(name: 'country', titleAttribute: 'name')
+                            ->searchable()
+                            ->preload()
+                            ->live()
+                            ->afterStateUpdated(function (Set $set) {
+                                $set('state_id', null);
+                                $set('city_id', null);
+                            })
+                            ->required(),
+                        Forms\Components\Select::make('state_id')
                             ->options(fn (Get $get): Collection => State::query()
-                            ->where('country_id', $get('country_id'))
-                            ->pluck('name', 'id'))
+                                ->where('country_id', $get('country_id'))
+                                ->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
                             ->live()
                             ->afterStateUpdated(fn (Set $set) => $set('city_id', null))
                             ->required(),
-                            Forms\Components\Select::make('city_id')
+                        Forms\Components\Select::make('city_id')
                             ->options(fn (Get $get): Collection => City::query()
-                            ->where('state_id', $get('state_id'))
-                            ->pluck('name','id'))
-                                ->searchable()
-                                ->preload()
-                                ->live()
-                                ->required(),
-                            Forms\Components\TextInput::make('address')
-                                ->maxLength(25),
-                            Forms\Components\TextInput::make('postal_code')
-                                ->maxLength(5),
-                            Forms\Components\TextInput::make('latitude')
-                                ->maxLength(10, 8),
-                            Forms\Components\TextInput::make('longitude')
-                                ->maxLength(11, 8),
-                        ]),
+                                ->where('state_id', $get('state_id'))
+                                ->pluck('name', 'id'))
+                            ->searchable()
+                            ->preload()
+                            ->live()
+                            ->required(),
+                        Forms\Components\TextInput::make('address')
+                            ->maxLength(25),
+                        Forms\Components\TextInput::make('postal_code')
+                            ->maxLength(5),
+                        Forms\Components\TextInput::make('latitude')
+                            ->maxLength(10),
+                        Forms\Components\TextInput::make('longitude')
+                            ->maxLength(11),
+                    ]),
             ]);
     }
 
@@ -102,6 +111,9 @@ class PalenqueResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nombre')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('slug') // Añadir slug a la tabla
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('historia')
@@ -113,9 +125,9 @@ class PalenqueResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\ImageColumn::make('foto')
-                    ->disk('public')           // Especifica el disco
-                    ->height(50)              // Altura de la imagen
-                    ->width(50)    
+                    ->disk('public')
+                    ->height(50)
+                    ->width(50)
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('country.name')

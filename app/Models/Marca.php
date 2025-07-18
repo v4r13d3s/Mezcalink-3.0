@@ -8,6 +8,7 @@ class Marca extends Model
 {
     protected $fillable = [
         'nombre',
+        'slug',
         'certificado_dom',
         'logo',
         'descripcion',

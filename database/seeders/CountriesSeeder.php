@@ -4,43 +4,83 @@ namespace Database\Seeders;
 
 use App\Models\Country;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\File;
 
 class CountriesSeeder extends Seeder
 {
     public function run(): void
     {
-        $json = File::get(database_path('data/countries.json'));
-        $countries = json_decode($json, true);
+        // Solo México
+        $mexico = [
+            'id' => 142,
+            'name' => 'Mexico',
+            'iso3' => 'MEX',
+            'iso2' => 'MX',
+            'numeric_code' => '484',
+            'phonecode' => '52',
+            'capital' => 'Mexico City',
+            'currency' => 'MXN',
+            'currency_name' => 'Mexican peso',
+            'currency_symbol' => '$',
+            'tld' => '.mx',
+            'native' => 'México',
+            'region' => 'Americas',
+            'region_id' => 2,
+            'subregion' => 'Central America',
+            'subregion_id' => 13,
+            'nationality' => 'Mexican',
+            'timezones' => json_encode([
+                [
+                    'zoneName' => 'America/Bahia_Banderas',
+                    'gmtOffset' => -21600,
+                    'gmtOffsetName' => 'UTC-06:00',
+                    'abbreviation' => 'CST',
+                    'tzName' => 'Central Standard Time'
+                ],
+                [
+                    'zoneName' => 'America/Cancun',
+                    'gmtOffset' => -18000,
+                    'gmtOffsetName' => 'UTC-05:00',
+                    'abbreviation' => 'EST',
+                    'tzName' => 'Eastern Standard Time'
+                ],
+                [
+                    'zoneName' => 'America/Mexico_City',
+                    'gmtOffset' => -21600,
+                    'gmtOffsetName' => 'UTC-06:00',
+                    'abbreviation' => 'CST',
+                    'tzName' => 'Central Standard Time'
+                ],
+                [
+                    'zoneName' => 'America/Tijuana',
+                    'gmtOffset' => -28800,
+                    'gmtOffsetName' => 'UTC-08:00',
+                    'abbreviation' => 'PST',
+                    'tzName' => 'Pacific Standard Time'
+                ]
+            ]),
+            'translations' => json_encode([
+                'kr' => '멕시코',
+                'pt-BR' => 'México',
+                'pt' => 'México',
+                'nl' => 'Mexico',
+                'hr' => 'Meksiko',
+                'fa' => 'مکزیک',
+                'de' => 'Mexiko',
+                'es' => 'México',
+                'fr' => 'Mexique',
+                'ja' => 'メキシコ',
+                'it' => 'Messico',
+                'cn' => '墨西哥',
+                'tr' => 'Meksika'
+            ]),
+            'latitude' => '23.00000000',
+            'longitude' => '-102.00000000',
+            'emoji' => '🇲🇽',
+            'emojiU' => 'U+1F1F2 U+1F1FD'
+        ];
 
-        foreach ($countries as $country) {
-            Country::create([
-                'id' => $country['id'],
-                'name' => $country['name'],
-                'iso3' => $country['iso3'],
-                'iso2' => $country['iso2'],
-                'numeric_code' => $country['numeric_code'],
-                'phonecode' => $country['phonecode'],
-                'capital' => $country['capital'],
-                'currency' => $country['currency'],
-                'currency_name' => $country['currency_name'],
-                'currency_symbol' => $country['currency_symbol'],
-                'tld' => $country['tld'],
-                'native' => $country['native'],
-                'region' => $country['region'],
-                'region_id' => $country['region_id'],
-                'subregion' => $country['subregion'],
-                'subregion_id' => $country['subregion_id'],
-                'nationality' => $country['nationality'],
-                'timezones' => $country['timezones'],
-                'translations' => $country['translations'],
-                'latitude' => $country['latitude'],
-                'longitude' => $country['longitude'],
-                'emoji' => $country['emoji'],
-                'emojiU' => $country['emojiU'],
-            ]);
-        }
+        Country::create($mexico);
 
-        $this->command->info('Countries seeded successfully!');
+        $this->command->info('México seeded successfully!');
     }
 }

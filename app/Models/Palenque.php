@@ -8,6 +8,7 @@ class Palenque extends Model
 {
     protected $fillable = [
         'nombre',
+        'slug',
         'descripcion',
         'historia',
         'telefono',
