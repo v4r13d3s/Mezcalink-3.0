@@ -25,18 +25,25 @@
     @endphp
 
     <body>
-        <div class="container mx-auto">
-            <x-alert :color="$color" class="mb-10">
-
-                <x-slot name="title">
-                    Titulo 1
-                </x-slot>
-
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.                
-            </x-alert>
             
-            <x-card color="red" class="text-yellow">
-            </x-card>
-        </div>
+            @livewire('navbar')
+
+            <x-banner/>
+
+            @livewire('featured-mezcals')
+
+            <x-sabias-que />
+
+            <x-proceso-elaboracion />
+
+            <x-marcas-reconocidas />
+
+            <x-agaves />
+
+            <x-regiones-mezcaleras />
+
+            <x-noticias />
+
+            <x-footer />
     </body>
 </html>

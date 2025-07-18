@@ -59,9 +59,8 @@ class MaestroResource extends Resource
                             ->visibility('public')          // Visible públicamente
                             ->image(), // Esto restringe a solo imágenes
                         Forms\Components\TextInput::make('anios_experiencia')
-                            ->maxLength(2),
-                        Forms\Components\Textarea::make('biografia')
-                            ->limit(30),
+                            ->maxLength(100),
+                        Forms\Components\Textarea::make('biografia'),
                         Forms\Components\Select::make('country_id')
                             ->relationship(name: 'country', titleAttribute: 'name')
                             ->searchable()

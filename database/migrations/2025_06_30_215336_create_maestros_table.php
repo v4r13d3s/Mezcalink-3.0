@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('telefono')->nullable();
             $table->string('correo')->unique()->nullable();
             $table->string('foto')->nullable();
-            $table->integer('anios_experiencia')->nullable();
+            $table->string('anios_experiencia')->nullable();
             $table->text('biografia')->nullable();
             $table->timestamps();
         });
